@@ -10,7 +10,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     descriptionTa: 'OPC 53, PPC, ரெடிமிக்ஸ் கான்கிரீட் மற்றும் விரைவு கெட்டிப்படும் சிமெண்ட்',
     iconName: 'Boxes',
     sortOrder: 1,
-    itemCount: 42,
+    itemCount: 2,
   },
   {
     id: 'cat-steel',
@@ -21,7 +21,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     descriptionTa: 'Fe 500D, Fe 550D அரிப்பு எதிர்ப்பு கம்பிகள், MS பீம்கள்',
     iconName: 'Layers',
     sortOrder: 2,
-    itemCount: 38,
+    itemCount: 2,
   },
   {
     id: 'cat-bricks',
@@ -32,7 +32,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     descriptionTa: 'வயர் கட் சிவப்பு செங்கற்கள், AAC பிளாக்குகள், M-மணல் மற்றும் ஜல்லி',
     iconName: 'Component',
     sortOrder: 3,
-    itemCount: 29,
+    itemCount: 2,
   },
   {
     id: 'cat-machinery',
@@ -43,7 +43,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     descriptionTa: 'டீசல் கான்கிரீட் கலவை இயந்திரங்கள், வைப்ரேட்டர்கள், பார் வெட்டும் இயந்திரங்கள்',
     iconName: 'Wrench',
     sortOrder: 4,
-    itemCount: 16,
+    itemCount: 2,
   },
   {
     id: 'cat-plumbing',
@@ -54,7 +54,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     descriptionTa: 'தொழில்துறை UPVC குழாய்கள், CPVC, நிலத்தடி கழிவுநீர் குழாய்கள்',
     iconName: 'Pipette',
     sortOrder: 5,
-    itemCount: 54,
+    itemCount: 2,
   },
   {
     id: 'cat-electrical',
@@ -65,7 +65,7 @@ export const INITIAL_CATEGORIES: Category[] = [
     descriptionTa: 'ஆர்மர்டு செம்பு கேபிள்கள், 3-பேஸ் விநியோக பலகைகள், ஜெனரேட்டர்கள்',
     iconName: 'Zap',
     sortOrder: 6,
-    itemCount: 31,
+    itemCount: 2,
   },
 ];
 

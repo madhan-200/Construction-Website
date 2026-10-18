@@ -56,7 +56,17 @@ export class MarketplaceStore {
       return INITIAL_CATEGORIES;
     }
     try {
-      return JSON.parse(stored);
+      const parsed: Category[] = JSON.parse(stored);
+      // Ensure cached categories preserve canonical itemCount and icons to avoid hydration mismatch
+      return parsed.map((c) => {
+        const canonical = INITIAL_CATEGORIES.find(ic => ic.slug === c.slug || ic.id === c.id);
+        const count = c.itemCount && c.itemCount > 0 ? c.itemCount : (canonical?.itemCount ?? 2);
+        return {
+          ...c,
+          itemCount: count,
+          iconName: canonical?.iconName || c.iconName || 'Boxes',
+        };
+      });
     } catch {
       return INITIAL_CATEGORIES;
     }

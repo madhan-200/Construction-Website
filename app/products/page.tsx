@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useMemo, Suspense } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useApp } from '@/lib/context/AppContext';
 import { store } from '@/lib/db/store';
+import { Category, Product } from '@/lib/types';
 import ProductCard from '@/components/ProductCard';
 import { Search, Filter, Shield, Building2, SlidersHorizontal, X } from 'lucide-react';
 
@@ -18,8 +19,25 @@ function ProductsContent() {
   const [ownerFilter, setOwnerFilter] = useState<'all' | 'platform' | 'vendor'>('all');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc'>('featured');
 
-  const categories = store.getCategories();
-  const allProducts = store.getProducts({ onlyApproved: true });
+  const [categories, setCategories] = useState<Category[]>(() => store.getCategories());
+  const [allProducts, setAllProducts] = useState<Product[]>(() => store.getProducts({ onlyApproved: true }));
+
+  useEffect(() => {
+    const handleCategoriesUpdate = () => {
+      setCategories(store.getCategories());
+    };
+    const handleProductsUpdate = () => {
+      setAllProducts(store.getProducts({ onlyApproved: true }));
+    };
+
+    window.addEventListener('categories-updated', handleCategoriesUpdate);
+    window.addEventListener('products-updated', handleProductsUpdate);
+
+    return () => {
+      window.removeEventListener('categories-updated', handleCategoriesUpdate);
+      window.removeEventListener('products-updated', handleProductsUpdate);
+    };
+  }, []);
 
   const filteredProducts = useMemo(() => {
     let result = allProducts;

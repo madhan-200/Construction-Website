@@ -1,5 +1,6 @@
 import { createBrowserClient } from '@supabase/ssr';
 import { Product, Category, QuoteRequest, Order, VendorApplication, CommissionRule, AuditEvent } from '@/lib/types';
+import { INITIAL_CATEGORIES } from './mock-data';
 
 export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -32,17 +33,20 @@ export async function fetchLiveCategories(): Promise<Category[] | null> {
       return null;
     }
 
-    return data.map((c: any) => ({
-      id: c.id,
-      slug: c.slug,
-      nameEn: c.name_en,
-      nameTa: c.name_ta || c.name_en,
-      descriptionEn: c.description_en || '',
-      descriptionTa: c.description_ta || '',
-      iconName: 'Boxes',
-      sortOrder: c.sort_order || 0,
-      itemCount: 0,
-    }));
+    return data.map((c: any) => {
+      const canonical = INITIAL_CATEGORIES.find(ic => ic.slug === c.slug || ic.id === c.id);
+      return {
+        id: c.id,
+        slug: c.slug,
+        nameEn: c.name_en,
+        nameTa: c.name_ta || c.name_en,
+        descriptionEn: c.description_en || canonical?.descriptionEn || '',
+        descriptionTa: c.description_ta || canonical?.descriptionTa || '',
+        iconName: canonical?.iconName || 'Boxes',
+        sortOrder: c.sort_order ?? canonical?.sortOrder ?? 0,
+        itemCount: canonical?.itemCount ?? 2,
+      };
+    });
   } catch (err) {
     console.error('fetchLiveCategories error:', err);
     return null;

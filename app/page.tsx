@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useApp } from '@/lib/context/AppContext';
 import { store } from '@/lib/db/store';
+import { Category, Product } from '@/lib/types';
 import ProductCard from '@/components/ProductCard';
 import MaterialSimulator from '@/components/MaterialSimulator';
 import { 
@@ -32,8 +33,26 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 export default function HomePage() {
   const { locale, dict } = useApp();
-  const categories = store.getCategories();
-  const products = store.getProducts({ onlyApproved: true });
+  const [categories, setCategories] = useState<Category[]>(() => store.getCategories());
+  const [products, setProducts] = useState<Product[]>(() => store.getProducts({ onlyApproved: true }));
+
+  useEffect(() => {
+    const handleCategoriesUpdate = () => {
+      setCategories(store.getCategories());
+    };
+    const handleProductsUpdate = () => {
+      setProducts(store.getProducts({ onlyApproved: true }));
+    };
+
+    window.addEventListener('categories-updated', handleCategoriesUpdate);
+    window.addEventListener('products-updated', handleProductsUpdate);
+
+    return () => {
+      window.removeEventListener('categories-updated', handleCategoriesUpdate);
+      window.removeEventListener('products-updated', handleProductsUpdate);
+    };
+  }, []);
+
   const featured = products.filter(p => p.isFeatured);
 
   return (
