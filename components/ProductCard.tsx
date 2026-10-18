@@ -32,7 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Media Container */}
         <Link href={`/products/${product.slug}`} className="block relative aspect-4/3 bg-industrial-950 overflow-hidden">
           <img
-            src={product.images[0] || 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80'}
+            src={product.images[0] || '/images/products/cement-opc53.jpg'}
             alt={title}
             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
           />

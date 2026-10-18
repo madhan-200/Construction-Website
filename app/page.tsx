@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useApp } from '@/lib/context/AppContext';
 import { store } from '@/lib/db/store';
 import ProductCard from '@/components/ProductCard';
+import MaterialSimulator from '@/components/MaterialSimulator';
 import { 
   ArrowRight, 
   ShieldCheck, 
@@ -94,46 +95,58 @@ export default function HomePage() {
           {/* Right Column: Specimen Mosaic */}
           <div className="lg:col-span-5 grid grid-cols-2 gap-3 relative">
             <div className="space-y-3">
-              <div className="bg-industrial-900 border border-industrial-800 rounded-lg p-3">
+              <div className="bg-industrial-900 border border-industrial-800 rounded-lg p-3 group hover:border-safety-orange transition">
                 <img
-                  src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80"
-                  alt="OPC 53 Cement"
-                  className="rounded aspect-4/3 object-cover w-full mb-2"
+                  src="/images/products/cement-opc53.jpg"
+                  alt="OPC 53 Cement Pallet"
+                  className="rounded aspect-4/3 object-cover w-full mb-2 border border-industrial-800"
                 />
-                <div className="text-xs font-bold text-white">OPC 53 Grade Cement</div>
-                <div className="text-[11px] text-industrial-400 font-mono">IS 12269 Certified</div>
+                <div className="text-xs font-bold text-white flex items-center justify-between">
+                  <span>OPC 53 Grade Cement</span>
+                  <span className="text-[10px] text-safety-orange font-mono">₹385/bag</span>
+                </div>
+                <div className="text-[11px] text-industrial-400 font-mono">IS 12269 Certified Pallet</div>
               </div>
 
-              <div className="bg-industrial-900 border border-industrial-800 rounded-lg p-3">
+              <div className="bg-industrial-900 border border-industrial-800 rounded-lg p-3 group hover:border-safety-orange transition">
                 <img
-                  src="https://images.unsplash.com/photo-1584463699042-32b005221946?auto=format&fit=crop&w=600&q=80"
-                  alt="Wirecut Clay Bricks"
-                  className="rounded aspect-4/3 object-cover w-full mb-2"
+                  src="/images/products/bricks-wirecut.jpg"
+                  alt="Wirecut Clay Bricks Pallet"
+                  className="rounded aspect-4/3 object-cover w-full mb-2 border border-industrial-800"
                 />
-                <div className="text-xs font-bold text-white">Wirecut Red Bricks</div>
-                <div className="text-[11px] text-industrial-400 font-mono">10.5 N/mm² Strength</div>
+                <div className="text-xs font-bold text-white flex items-center justify-between">
+                  <span>Wirecut Red Bricks</span>
+                  <span className="text-[10px] text-safety-orange font-mono">₹11.5k/1k</span>
+                </div>
+                <div className="text-[11px] text-industrial-400 font-mono">10.5 N/mm² IS 1077 Pallet</div>
               </div>
             </div>
 
             <div className="space-y-3 pt-6">
-              <div className="bg-industrial-900 border border-industrial-800 rounded-lg p-3">
+              <div className="bg-industrial-900 border border-industrial-800 rounded-lg p-3 group hover:border-safety-orange transition">
                 <img
-                  src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"
-                  alt="Tata Tiscon 550D"
-                  className="rounded aspect-4/3 object-cover w-full mb-2"
+                  src="/images/products/steel-tmt-12mm.jpg"
+                  alt="Tata Tiscon Fe 550D TMT Rebar"
+                  className="rounded aspect-4/3 object-cover w-full mb-2 border border-industrial-800"
                 />
-                <div className="text-xs font-bold text-white">Fe 550D TMT Rebar</div>
-                <div className="text-[11px] text-industrial-400 font-mono">Seismic High-Ductility</div>
+                <div className="text-xs font-bold text-white flex items-center justify-between">
+                  <span>Fe 550D TMT Rebar</span>
+                  <span className="text-[10px] text-safety-orange font-mono">₹64.5k/t</span>
+                </div>
+                <div className="text-[11px] text-industrial-400 font-mono">Seismic High-Ductility Rebar</div>
               </div>
 
-              <div className="bg-industrial-900 border border-industrial-800 rounded-lg p-3">
+              <div className="bg-industrial-900 border border-industrial-800 rounded-lg p-3 group hover:border-safety-orange transition">
                 <img
-                  src="https://images.unsplash.com/photo-1579847188804-ecba0e2ea330?auto=format&fit=crop&w=600&q=80"
-                  alt="Concrete Mixer"
-                  className="rounded aspect-4/3 object-cover w-full mb-2"
+                  src="/images/products/mixer-diesel.jpg"
+                  alt="500L Hydraulic Diesel Concrete Mixer"
+                  className="rounded aspect-4/3 object-cover w-full mb-2 border border-industrial-800"
                 />
-                <div className="text-xs font-bold text-white">500L Hydraulic Mixer</div>
-                <div className="text-[11px] text-industrial-400 font-mono">Site-Ready Diesel</div>
+                <div className="text-xs font-bold text-white flex items-center justify-between">
+                  <span>500L Hydraulic Mixer</span>
+                  <span className="text-[10px] text-safety-orange font-mono">₹1.85L/unit</span>
+                </div>
+                <div className="text-[11px] text-industrial-400 font-mono">Site-Ready Diesel Hopper</div>
               </div>
             </div>
           </div>
@@ -204,6 +217,11 @@ export default function HomePage() {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+      </section>
+
+      {/* Interactive Engineering & Freight Simulators */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <MaterialSimulator />
       </section>
 
       {/* Bulk Procurement Callout Banner */}

@@ -86,15 +86,25 @@ export async function fetchLiveProducts(options?: { categorySlug?: string; query
       sourceStatus: p.source_status,
       availabilityStatus: p.availability_status,
       specifications: p.attributes || {},
-      images: [
-        'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80'
-      ],
+      images: getLiveProductImages(p.slug, p.category_id),
       isFeatured: true,
     }));
   } catch (err) {
     console.error('fetchLiveProducts error:', err);
     return null;
   }
+}
+
+function getLiveProductImages(slug: string, categoryId?: string): string[] {
+  const s = (slug || '').toLowerCase();
+  const c = (categoryId || '').toLowerCase();
+  if (s.includes('cement') || c.includes('cement')) return ['/images/products/cement-opc53.jpg'];
+  if (s.includes('steel') || s.includes('tmt') || s.includes('rebar') || c.includes('steel')) return ['/images/products/steel-tmt-12mm.jpg'];
+  if (s.includes('brick') || s.includes('clay') || s.includes('aac') || c.includes('brick')) return ['/images/products/bricks-wirecut.jpg'];
+  if (s.includes('mixer') || s.includes('machinery') || c.includes('machinery')) return ['/images/products/mixer-diesel.jpg'];
+  if (s.includes('pipe') || s.includes('drainage') || s.includes('plumb') || c.includes('plumb')) return ['/images/products/pipes-upvc.jpg'];
+  if (s.includes('cable') || s.includes('power') || s.includes('elect') || c.includes('elect')) return ['/images/products/cable-armoured.jpg'];
+  return ['/images/products/cement-opc53.jpg'];
 }
 
 function isValidUuid(id?: string): boolean {

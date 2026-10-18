@@ -96,8 +96,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Country of Origin': 'India',
     },
     images: [
-      'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80',
+      '/images/products/cement-opc53.jpg',
     ],
     bulkPricingTiers: [
       { id: 'tier-1', minQuantity: 100, unitPriceMinor: 37500, currency: 'INR' },
@@ -133,8 +132,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Standard Specification': 'IS 1786:2008',
     },
     images: [
-      'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80',
+      '/images/products/steel-tmt-12mm.jpg',
     ],
     bulkPricingTiers: [
       { id: 'tier-st-1', minQuantity: 10, unitPriceMinor: 6250000, currency: 'INR' },
@@ -166,7 +164,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Efflorescence': 'Nil to slight',
     },
     images: [
-      'https://images.unsplash.com/photo-1584463699042-32b005221946?auto=format&fit=crop&w=800&q=80',
+      '/images/products/bricks-wirecut.jpg',
     ],
   },
   {
@@ -196,7 +194,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Mobility': 'Pneumatic 4-wheel tow chassis with tow-bar',
     },
     images: [
-      'https://images.unsplash.com/photo-1579847188804-ecba0e2ea330?auto=format&fit=crop&w=800&q=80',
+      '/images/products/mixer-diesel.jpg',
     ],
   },
   {
@@ -224,7 +222,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Standard': 'IS 15328:2003',
     },
     images: [
-      'https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&w=800&q=80',
+      '/images/products/pipes-upvc.jpg',
     ],
   },
   {
@@ -254,7 +252,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Standard': 'IS 7098 (Part 1)',
     },
     images: [
-      'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80',
+      '/images/products/cable-armoured.jpg',
     ],
   },
 ];
