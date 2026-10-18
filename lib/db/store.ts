@@ -83,7 +83,19 @@ export class MarketplaceStore {
         localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(INITIAL_PRODUCTS));
       } else {
         try {
-          items = JSON.parse(stored);
+          const parsed: Product[] = JSON.parse(stored);
+          const existingIds = new Set(parsed.map(p => p.id));
+          const missingInitial = INITIAL_PRODUCTS.filter(p => !existingIds.has(p.id));
+          // Refresh images and fields from INITIAL_PRODUCTS to avoid stale Unsplash cache
+          const updated = parsed.map(p => {
+            const init = INITIAL_PRODUCTS.find(ip => ip.id === p.id);
+            if (init) {
+              return { ...p, images: init.images, titleTa: init.titleTa || p.titleTa };
+            }
+            return p;
+          });
+          items = [...updated, ...missingInitial];
+          localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(items));
         } catch {
           items = INITIAL_PRODUCTS;
         }
