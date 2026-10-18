@@ -58,10 +58,14 @@ export default function AdminPage() {
 
   // Quote Action Handlers
   const handleIssueQuote = (id: string) => {
-    const values = quoteAmounts[id] || { subtotal: 9500000, freight: 350000 };
+    const values = quoteAmounts[id];
+    if (!values || !values.subtotal) {
+      alert('Please enter a valid quoted subtotal amount.');
+      return;
+    }
     store.updateQuoteStatus(id, 'quoted', {
       quotedSubtotalMinor: values.subtotal,
-      deliveryFeeMinor: values.freight,
+      deliveryFeeMinor: values.freight || 0,
     });
     setQuotes(store.getQuoteRequests());
     setAuditEvents(store.getAuditEvents());
@@ -69,7 +73,11 @@ export default function AdminPage() {
 
   // Order Shipment Handler
   const handleShipOrder = (id: string) => {
-    const values = shipmentTracking[id] || { carrier: 'TN Heavy Haul Logistics', trackingNo: `TNHL-${Math.floor(1000 + Math.random() * 9000)}` };
+    const values = shipmentTracking[id];
+    if (!values || !values.carrier || !values.trackingNo) {
+      alert('Please enter both Carrier Name and Tracking Number to dispatch.');
+      return;
+    }
     store.updateOrderStatus(id, 'processing', values);
     setOrders(store.getOrders());
     setAuditEvents(store.getAuditEvents());
@@ -362,13 +370,12 @@ export default function AdminPage() {
                         <span className="text-industrial-400 font-mono">Subtotal (Paise): </span>
                         <input
                           type="number"
-                          placeholder="9500000"
-                          defaultValue={9500000}
+                          placeholder="e.g. 5000000"
                           onChange={(e) => {
                             const val = parseInt(e.target.value) || 0;
                             setQuoteAmounts({
                               ...quoteAmounts,
-                              [q.id]: { subtotal: val, freight: quoteAmounts[q.id]?.freight || 350000 }
+                              [q.id]: { subtotal: val, freight: quoteAmounts[q.id]?.freight || 0 }
                             });
                           }}
                           className="bg-industrial-950 border border-industrial-700 text-white rounded px-2 py-1 font-mono w-28 text-xs"
@@ -378,13 +385,12 @@ export default function AdminPage() {
                         <span className="text-industrial-400 font-mono">Freight: </span>
                         <input
                           type="number"
-                          placeholder="350000"
-                          defaultValue={350000}
+                          placeholder="e.g. 250000"
                           onChange={(e) => {
                             const val = parseInt(e.target.value) || 0;
                             setQuoteAmounts({
                               ...quoteAmounts,
-                              [q.id]: { subtotal: quoteAmounts[q.id]?.subtotal || 9500000, freight: val }
+                              [q.id]: { subtotal: quoteAmounts[q.id]?.subtotal || 0, freight: val }
                             });
                           }}
                           className="bg-industrial-950 border border-industrial-700 text-white rounded px-2 py-1 font-mono w-24 text-xs"
@@ -468,7 +474,7 @@ export default function AdminPage() {
                             onChange={(e) => {
                               setShipmentTracking({
                                 ...shipmentTracking,
-                                [ord.id]: { carrier: e.target.value, trackingNo: shipmentTracking[ord.id]?.trackingNo || 'TRK-9921' }
+                                [ord.id]: { carrier: e.target.value, trackingNo: shipmentTracking[ord.id]?.trackingNo || '' }
                               });
                             }}
                             className="bg-industrial-900 border border-industrial-700 rounded px-2 py-1 text-white font-mono text-xs w-36"
@@ -479,7 +485,7 @@ export default function AdminPage() {
                             onChange={(e) => {
                               setShipmentTracking({
                                 ...shipmentTracking,
-                                [ord.id]: { carrier: shipmentTracking[ord.id]?.carrier || 'TN Freight', trackingNo: e.target.value }
+                                [ord.id]: { carrier: shipmentTracking[ord.id]?.carrier || '', trackingNo: e.target.value }
                               });
                             }}
                             className="bg-industrial-900 border border-industrial-700 rounded px-2 py-1 text-white font-mono text-xs w-28"

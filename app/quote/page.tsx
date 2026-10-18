@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 function QuoteContent() {
-  const { locale, dict } = useApp();
+  const { locale, dict, user } = useApp();
   const searchParams = useSearchParams();
   const preselectedProductId = searchParams.get('product');
   const preselectedQty = parseInt(searchParams.get('qty') || '0', 10);
@@ -30,16 +30,16 @@ function QuoteContent() {
   const [newRefCode, setNewRefCode] = useState('');
 
   // Form State
-  const [requesterName, setRequesterName] = useState('Karthik Subramanian');
-  const [requesterEmail, setRequesterEmail] = useState('procurement@chennaimetrobldrs.com');
-  const [requesterPhone, setRequesterPhone] = useState('+91 94440 12890');
-  const [companyName, setCompanyName] = useState('Chennai Metro Builders & Civil Infra Ltd');
-  const [addressLine1, setAddressLine1] = useState('Tower 4 Construction Site, OMR IT Expressway');
-  const [city, setCity] = useState('Navalur, Chennai');
+  const [requesterName, setRequesterName] = useState(user?.displayName || '');
+  const [requesterEmail, setRequesterEmail] = useState(user?.email || '');
+  const [requesterPhone, setRequesterPhone] = useState(user?.phone || '');
+  const [companyName, setCompanyName] = useState(user?.companyName || '');
+  const [addressLine1, setAddressLine1] = useState('');
+  const [city, setCity] = useState('Chennai');
   const [state, setState] = useState('Tamil Nadu');
-  const [postalCode, setPostalCode] = useState('603103');
-  const [requiredByDate, setRequiredByDate] = useState('2026-11-15');
-  const [projectNotes, setProjectNotes] = useState('Requires boom placer access and 40-tonne articulated truck unloading zone.');
+  const [postalCode, setPostalCode] = useState('');
+  const [requiredByDate, setRequiredByDate] = useState('');
+  const [projectNotes, setProjectNotes] = useState('');
 
   // Multi-line items
   const [items, setItems] = useState<QuoteRequestItem[]>(() => {
@@ -116,11 +116,11 @@ function QuoteContent() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const created = store.submitQuoteRequest({
-      requesterUserId: 'user-buyer-active',
-      requesterName,
-      requesterEmail,
-      requesterPhone,
-      companyName,
+      requesterUserId: user?.id || 'c0000000-0000-4000-8000-000000000001',
+      requesterName: requesterName || user?.displayName || 'Customer Requisition',
+      requesterEmail: requesterEmail || user?.email || 'quote@contractor.in',
+      requesterPhone: requesterPhone || user?.phone || '+91 98400 00000',
+      companyName: companyName || user?.companyName || 'Registered Enterprise',
       currency: 'INR',
       destinationAddress: {
         addressLine1,
@@ -273,6 +273,7 @@ function QuoteContent() {
                 <input
                   type="text"
                   required
+                  placeholder="e.g. S. Karthikeyan"
                   value={requesterName}
                   onChange={(e) => setRequesterName(e.target.value)}
                   className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white focus:outline-none focus:border-safety-orange"
@@ -284,6 +285,7 @@ function QuoteContent() {
                 <input
                   type="text"
                   required
+                  placeholder="e.g. Metro Builders Ltd"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white focus:outline-none focus:border-safety-orange"
@@ -295,6 +297,7 @@ function QuoteContent() {
                 <input
                   type="email"
                   required
+                  placeholder="procurement@company.com"
                   value={requesterEmail}
                   onChange={(e) => setRequesterEmail(e.target.value)}
                   className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white focus:outline-none focus:border-safety-orange"
@@ -306,6 +309,7 @@ function QuoteContent() {
                 <input
                   type="tel"
                   required
+                  placeholder="+91 98765 43210"
                   value={requesterPhone}
                   onChange={(e) => setRequesterPhone(e.target.value)}
                   className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white font-mono focus:outline-none focus:border-safety-orange"

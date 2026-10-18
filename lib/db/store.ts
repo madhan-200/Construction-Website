@@ -2,6 +2,7 @@
 
 import { Product, Category, VendorApplication, QuoteRequest, Order, CommissionRule, AuditEvent, Locale } from '@/lib/types';
 import { INITIAL_CATEGORIES, INITIAL_PRODUCTS, INITIAL_VENDOR_APPLICATIONS, INITIAL_QUOTE_REQUESTS, INITIAL_ORDERS, INITIAL_COMMISSION_RULES, INITIAL_AUDIT_EVENTS } from './mock-data';
+import { fetchLiveCategories, fetchLiveProducts, insertLiveQuoteRequest, insertLiveOrder, insertLiveVendorApplication } from './supabase';
 
 const STORAGE_KEYS = {
   PRODUCTS: 'buildmart_products',
@@ -41,6 +42,15 @@ export class MarketplaceStore {
   public getCategories(): Category[] {
     if (!this.isClient()) return INITIAL_CATEGORIES;
     const stored = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
+    
+    // Background fetch from Supabase
+    fetchLiveCategories().then((live) => {
+      if (live && live.length > 0) {
+        localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(live));
+        window.dispatchEvent(new Event('categories-updated'));
+      }
+    }).catch(() => {});
+
     if (!stored) {
       localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(INITIAL_CATEGORIES));
       return INITIAL_CATEGORIES;
@@ -57,6 +67,18 @@ export class MarketplaceStore {
     let items = INITIAL_PRODUCTS;
     if (this.isClient()) {
       const stored = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+      
+      // Background fetch from Supabase
+      fetchLiveProducts(options).then((live) => {
+        if (live && live.length > 0) {
+          // Merge live items with custom created items
+          const custom = items.filter(i => i.id.startsWith('prod-cust-'));
+          const merged = [...live, ...custom];
+          localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(merged));
+          window.dispatchEvent(new Event('products-updated'));
+        }
+      }).catch(() => {});
+
       if (!stored) {
         localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(INITIAL_PRODUCTS));
       } else {
@@ -143,6 +165,27 @@ export class MarketplaceStore {
     }
   }
 
+  public updateProductStock(productId: string, stock: number): void {
+    const products = this.getProducts({ onlyApproved: false });
+    const idx = products.findIndex(p => p.id === productId);
+    if (idx !== -1) {
+      products[idx].availableStock = stock;
+      products[idx].availabilityStatus = stock <= 0 ? 'out_of_stock' : 'available';
+      if (this.isClient()) {
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
+        window.dispatchEvent(new Event('products-updated'));
+        this.recordAudit({
+          actorName: 'Vendor',
+          actorType: 'vendor',
+          action: 'PRODUCT_STOCK_UPDATED',
+          entityType: 'product',
+          entityId: productId,
+          reason: `Stock level updated to ${stock}`,
+        });
+      }
+    }
+  }
+
   // Vendor Applications
   public getVendorApplications(): VendorApplication[] {
     if (!this.isClient()) return INITIAL_VENDOR_APPLICATIONS;
@@ -169,6 +212,7 @@ export class MarketplaceStore {
     apps.unshift(newApp);
     if (this.isClient()) {
       localStorage.setItem(STORAGE_KEYS.APPLICATIONS, JSON.stringify(apps));
+      insertLiveVendorApplication(newApp).catch(console.error);
       this.recordAudit({
         actorName: app.applicantName,
         actorType: 'customer',
@@ -231,6 +275,7 @@ export class MarketplaceStore {
     quotes.unshift(newQuote);
     if (this.isClient()) {
       localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(quotes));
+      insertLiveQuoteRequest(newQuote).catch(console.error);
       this.recordAudit({
         actorName: data.requesterName,
         actorType: 'customer',
@@ -271,6 +316,47 @@ export class MarketplaceStore {
     }
   }
 
+  public acceptQuote(id: string, actorName: string = 'Buyer'): void {
+    const quotes = this.getQuoteRequests();
+    const idx = quotes.findIndex(q => q.id === id);
+    if (idx !== -1) {
+      quotes[idx].status = 'accepted';
+      quotes[idx].acceptedAt = new Date().toISOString();
+      if (this.isClient()) {
+        localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(quotes));
+        window.dispatchEvent(new Event('quotes-updated'));
+        this.recordAudit({
+          actorName,
+          actorType: 'customer',
+          action: 'QUOTE_ACCEPTED_BY_BUYER',
+          entityType: 'quote_request',
+          entityId: id,
+          reason: 'Buyer accepted the formal quotation terms',
+        });
+      }
+    }
+  }
+
+  public declineQuote(id: string, actorName: string = 'Buyer'): void {
+    const quotes = this.getQuoteRequests();
+    const idx = quotes.findIndex(q => q.id === id);
+    if (idx !== -1) {
+      quotes[idx].status = 'declined';
+      if (this.isClient()) {
+        localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(quotes));
+        window.dispatchEvent(new Event('quotes-updated'));
+        this.recordAudit({
+          actorName,
+          actorType: 'customer',
+          action: 'QUOTE_DECLINED_BY_BUYER',
+          entityType: 'quote_request',
+          entityId: id,
+          reason: 'Buyer declined the formal quotation terms',
+        });
+      }
+    }
+  }
+
   // Orders
   public getOrders(): Order[] {
     if (!this.isClient()) return INITIAL_ORDERS;
@@ -299,6 +385,7 @@ export class MarketplaceStore {
     orders.unshift(newOrder);
     if (this.isClient()) {
       localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+      insertLiveOrder(newOrder).catch(console.error);
       this.recordAudit({
         actorName: order.customerName,
         actorType: 'customer',

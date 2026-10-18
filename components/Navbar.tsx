@@ -13,12 +13,16 @@ import {
   FileText, 
   Store, 
   SlidersHorizontal,
-  PackageCheck
+  PackageCheck,
+  User,
+  LogOut,
+  ChevronDown
 } from 'lucide-react';
 
 export default function Navbar() {
-  const { locale, setLocale, dict, cartCount } = useApp();
+  const { locale, setLocale, dict, cartCount, user, signOut } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -26,6 +30,12 @@ export default function Navbar() {
     if (searchQuery.trim()) {
       router.push(`/products?q=${encodeURIComponent(searchQuery.trim())}`);
     }
+  };
+
+  const handleSignOut = async () => {
+    setShowUserMenu(false);
+    await signOut();
+    router.push('/login');
   };
 
   return (
@@ -62,13 +72,23 @@ export default function Navbar() {
             </button>
           </div>
 
-          <Link
-            href="/vendor/apply"
-            className="hover:text-safety-orange transition flex items-center gap-1"
-          >
-            <Store className="w-3.5 h-3.5" />
-            <span>{dict.nav.applyToSell}</span>
-          </Link>
+          {user?.role === 'vendor' ? (
+            <Link
+              href="/vendor/dashboard"
+              className="text-safety-orange hover:underline transition flex items-center gap-1 font-mono font-bold"
+            >
+              <Store className="w-3.5 h-3.5" />
+              <span>{dict.vendor.portalTitle}</span>
+            </Link>
+          ) : (
+            <Link
+              href="/vendor/apply"
+              className="hover:text-safety-orange transition flex items-center gap-1"
+            >
+              <Store className="w-3.5 h-3.5" />
+              <span>{dict.nav.applyToSell}</span>
+            </Link>
+          )}
           
           <Link
             href="/admin"
@@ -138,6 +158,81 @@ export default function Navbar() {
             <PackageCheck className="w-4 h-4 text-industrial-400" />
             <span className="hidden lg:inline">{dict.nav.myOrders}</span>
           </Link>
+
+          {/* User Account Menu / Auth */}
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-1.5 bg-industrial-900 hover:bg-industrial-850 border border-industrial-700 hover:border-safety-orange text-industrial-200 hover:text-white px-2.5 py-1.5 rounded text-xs font-mono transition"
+              >
+                <User className="w-3.5 h-3.5 text-safety-orange" />
+                <span className="hidden md:inline max-w-[100px] truncate">{user.displayName}</span>
+                <span className="text-[10px] bg-industrial-800 text-safety-orange px-1 py-0.2 rounded uppercase">
+                  {user.role}
+                </span>
+                <ChevronDown className="w-3 h-3 text-industrial-400" />
+              </button>
+
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-industrial-900 border border-industrial-800 rounded-lg shadow-2xl py-1.5 z-50 text-xs font-mono">
+                  <div className="px-3 py-1.5 border-b border-industrial-800 text-industrial-400">
+                    <div className="font-bold text-white truncate">{user.displayName}</div>
+                    <div className="text-[10px] text-industrial-500 truncate">{user.email}</div>
+                  </div>
+
+                  <Link
+                    href="/account"
+                    onClick={() => setShowUserMenu(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-industrial-300 hover:text-white hover:bg-industrial-800 transition"
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>{dict.nav.account} & Quotes</span>
+                  </Link>
+
+                  {user.role === 'vendor' && (
+                    <Link
+                      href="/vendor/dashboard"
+                      onClick={() => setShowUserMenu(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-industrial-300 hover:text-white hover:bg-industrial-800 transition"
+                    >
+                      <Store className="w-3.5 h-3.5 text-safety-orange" />
+                      <span>Vendor Workspace</span>
+                    </Link>
+                  )}
+
+                  {user.role === 'admin' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setShowUserMenu(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-industrial-300 hover:text-white hover:bg-industrial-800 transition"
+                    >
+                      <SlidersHorizontal className="w-3.5 h-3.5 text-safety-orange" />
+                      <span>{dict.nav.adminConsole}</span>
+                    </Link>
+                  )}
+
+                  <div className="border-t border-industrial-800 mt-1 pt-1">
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-industrial-800 transition text-left"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>{dict.nav.signOut}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded hover:bg-industrial-900 text-industrial-200 hover:text-white transition font-medium text-xs font-mono"
+            >
+              <User className="w-3.5 h-3.5 text-industrial-400" />
+              <span>{dict.nav.signIn}</span>
+            </Link>
+          )}
 
           {/* Cart Icon & Counter */}
           <Link

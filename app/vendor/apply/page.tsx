@@ -17,20 +17,20 @@ import {
 } from 'lucide-react';
 
 export default function VendorApplyPage() {
-  const { locale, dict } = useApp();
+  const { locale, dict, user } = useApp();
   const [applications, setApplications] = useState(() => store.getVendorApplications());
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
 
   // Form Fields
-  const [legalBusinessName, setLegalBusinessName] = useState('Chennai Civil Works & Aggregates LLP');
-  const [tradeName, setTradeName] = useState('CCW Materials & Machinery');
-  const [registrationNumber, setRegistrationNumber] = useState('33AABCC9988D1Z4');
-  const [taxId, setTaxId] = useState('AABCC9988D');
-  const [applicantName, setApplicantName] = useState('Sundaramurthy P.');
-  const [businessEmail, setBusinessEmail] = useState('supply@ccwmaterials.in');
-  const [businessPhone, setBusinessPhone] = useState('+91 94441 55667');
-  const [businessAddress, setBusinessAddress] = useState('Plot 45, Ambattur Industrial Estate, Chennai 600058');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['Cement & Concrete', 'Structural Steel & TMT Bars']);
+  const [legalBusinessName, setLegalBusinessName] = useState('');
+  const [tradeName, setTradeName] = useState('');
+  const [registrationNumber, setRegistrationNumber] = useState('');
+  const [taxId, setTaxId] = useState('');
+  const [applicantName, setApplicantName] = useState(user?.displayName || '');
+  const [businessEmail, setBusinessEmail] = useState(user?.email || '');
+  const [businessPhone, setBusinessPhone] = useState(user?.phone || '');
+  const [businessAddress, setBusinessAddress] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const categories = store.getCategories();
 
@@ -45,12 +45,12 @@ export default function VendorApplyPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     store.submitVendorApplication({
-      applicantUserId: 'user-vendor-applicant-active',
-      applicantName,
+      applicantUserId: user?.id || 'c0000000-0000-4000-8000-000000000001',
+      applicantName: applicantName || user?.displayName || 'Vendor Applicant',
       legalBusinessName,
       tradeName,
-      businessEmail,
-      businessPhone,
+      businessEmail: businessEmail || user?.email || 'vendor@applicant.in',
+      businessPhone: businessPhone || user?.phone || '+91 98400 00000',
       registrationNumber,
       taxId,
       countryCode: 'IN',
@@ -107,6 +107,7 @@ export default function VendorApplyPage() {
               <input
                 type="text"
                 required
+                placeholder="e.g. Kongu Infrastructure Pvt Ltd"
                 value={legalBusinessName}
                 onChange={(e) => setLegalBusinessName(e.target.value)}
                 className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white focus:outline-none focus:border-safety-orange"
@@ -118,6 +119,7 @@ export default function VendorApplyPage() {
               <input
                 type="text"
                 required
+                placeholder="e.g. Kongu Blue Metal"
                 value={tradeName}
                 onChange={(e) => setTradeName(e.target.value)}
                 className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white focus:outline-none focus:border-safety-orange"
@@ -129,6 +131,7 @@ export default function VendorApplyPage() {
               <input
                 type="text"
                 required
+                placeholder="33AAECK1298P1Z8"
                 value={registrationNumber}
                 onChange={(e) => setRegistrationNumber(e.target.value)}
                 className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-safety-orange"
@@ -140,6 +143,7 @@ export default function VendorApplyPage() {
               <input
                 type="text"
                 required
+                placeholder="AAECK1298P"
                 value={taxId}
                 onChange={(e) => setTaxId(e.target.value)}
                 className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-safety-orange"
@@ -151,6 +155,7 @@ export default function VendorApplyPage() {
               <input
                 type="text"
                 required
+                placeholder="Full Name of Director / Partner"
                 value={applicantName}
                 onChange={(e) => setApplicantName(e.target.value)}
                 className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white focus:outline-none focus:border-safety-orange"
@@ -162,6 +167,7 @@ export default function VendorApplyPage() {
               <input
                 type="email"
                 required
+                placeholder="sales@company.com"
                 value={businessEmail}
                 onChange={(e) => setBusinessEmail(e.target.value)}
                 className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white focus:outline-none focus:border-safety-orange"
@@ -173,6 +179,7 @@ export default function VendorApplyPage() {
               <input
                 type="tel"
                 required
+                placeholder="+91 98765 43210"
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
                 className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white font-mono focus:outline-none focus:border-safety-orange"
@@ -184,6 +191,7 @@ export default function VendorApplyPage() {
               <textarea
                 rows={2}
                 required
+                placeholder="Registered Office / Yard Address, City, State, PIN"
                 value={businessAddress}
                 onChange={(e) => setBusinessAddress(e.target.value)}
                 className="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-white focus:outline-none focus:border-safety-orange"

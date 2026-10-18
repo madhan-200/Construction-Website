@@ -19,10 +19,10 @@ import {
 } from 'lucide-react';
 
 export default function CartPage() {
-  const { locale, dict, cart, updateCartQuantity, clearCart } = useApp();
+  const { locale, dict, cart, updateCartQuantity, clearCart, user } = useApp();
   const router = useRouter();
-  const [recipientName, setRecipientName] = useState('Karthik Subramanian (Site PM)');
-  const [deliveryAddress, setDeliveryAddress] = useState('Gate 3, Heavy Materials Staging Yard, OMR Expressway, Chennai');
+  const [recipientName, setRecipientName] = useState(user?.displayName || '');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
   const [isPlacing, setIsPlacing] = useState(false);
 
   // Recalculate trusted totals from catalog items
@@ -70,8 +70,8 @@ export default function CartPage() {
     });
 
     const newOrder = store.createOrder({
-      customerId: 'user-buyer-active',
-      customerName: recipientName,
+      customerId: user?.id || 'c0000000-0000-4000-8000-000000000001',
+      customerName: recipientName || user?.displayName || 'Customer Requisition',
       status: 'confirmed',
       currency: 'INR',
       subtotalMinor,
@@ -264,6 +264,7 @@ export default function CartPage() {
                 <input
                   type="text"
                   required
+                  placeholder="e.g. Site Engineer / Receiving Lead"
                   value={recipientName}
                   onChange={(e) => setRecipientName(e.target.value)}
                   className="w-full bg-industrial-950 border border-industrial-700 rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-safety-orange"
@@ -275,6 +276,7 @@ export default function CartPage() {
                 <textarea
                   rows={2}
                   required
+                  placeholder="Gate No., Job Site Location, Landmark, Unloading Instructions"
                   value={deliveryAddress}
                   onChange={(e) => setDeliveryAddress(e.target.value)}
                   className="w-full bg-industrial-950 border border-industrial-700 rounded px-2.5 py-1.5 text-white focus:outline-none focus:border-safety-orange"
