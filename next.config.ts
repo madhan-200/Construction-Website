@@ -14,6 +14,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { dev, isServer }) => {
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+      };
+      if (!isServer && config.output) {
+        config.output.chunkLoadTimeout = 120000;
+      }
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
